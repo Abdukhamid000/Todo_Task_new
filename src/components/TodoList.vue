@@ -6,7 +6,10 @@
                     <InputCheckbox type="checkbox" :model-value="isDone" @update:model-value="change" />
                 </div>
                 <div class="p-2">
-                    <p class="text-lg text-gray-400" :class="{ 'line-through': isDone }">{{ todo }}</p>
+
+                    <Input :disabled="isDone" :class="{ 'line-through': isDone }"
+                        class="text-lg text-gray-400 w-full border-none text-center outline-none" v-model="todoText" />
+
                 </div>
                 <Button @click="$emit('delete', id)" btn-style="delete-todo">
                     <svg class="h-6 w-6 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -24,8 +27,12 @@
 </template>
 
 <script setup lang="ts">
+import { ref, watch } from 'vue';
+import { debounce } from '../utils';
+
 import Button from './Button.vue';
 import InputCheckbox from './From/InputCheckbox.vue';
+import Input from './From/Input.vue';
 import { ITodo } from '../types';
 
 interface Props extends ITodo { }
@@ -33,14 +40,23 @@ interface Props extends ITodo { }
 interface Emits {
     (e: 'delete', id: number): void
     (e: 'toggle', id: number): void
+    (e: 'save', id: number, val: string): void
 }
 
 const props = defineProps<Props>()
 const emits = defineEmits<Emits>()
 
+const todoText = ref(props.todo)
+
 const change = () => {
     emits('toggle', props.id)
 }
+
+watch(() => todoText.value, (val) => {
+    debounce('todoText', () => {
+        emits('save', props.id, val)
+    }, 2000)
+})
 </script>
 
 <style scoped></style>

@@ -11,13 +11,13 @@
       </div>
       <div class="mt-8">
         <ul v-if="todoList.length > 0">
-          <TodoList v-for="item of todoList" v-bind="{ ...item }" :key="item.id" @delete="deleteTodo"
-            @toggle="toggleDone" />
+          <TodoList v-for="item of todoList" v-bind="{ ...item }" :key="item.id" @delete="deleteTodo" @toggle="toggleDone"
+            @save="saveEditedTodo" />
         </ul>
         <p v-else class="text-center">No Todos</p>
       </div>
       <div class="mt-8 space-x-2">
-        <Button class="rounded-none !inline-block">
+        <Button @click="showOnlyDoneTodos" class="rounded-none !inline-block">
           Clear Completed Task
         </Button>
         <Button type="button" @click="resetTodoList" btn-style="reset-todo">
@@ -40,6 +40,7 @@ import TodoList from './components/TodoList.vue';
 import { ITodo } from './types/index'
 
 const todoList = ref([] as ITodo[])
+const todosListDone = ref([] as ITodo[])
 const title = ref('ToDo App')
 const state = reactive({
   todo: '',
@@ -98,6 +99,7 @@ const toggleDone = (todoID: number) => {
     }
   })
 
+  todosListDone.value = todoList.value.filter((el) => el.isDone)
   saveToStorage()
 }
 
@@ -106,11 +108,26 @@ const resetTodoList = () => {
   saveToStorage()
 }
 
+const showOnlyDoneTodos = () => {
+  todoList.value = todosListDone.value
+  console.log(todoList.value);
+}
+
+const saveEditedTodo = (todoID: number, text: string) => {
+  todoList.value.forEach(el => {
+    if (el.id === todoID) {
+      el.todo = text
+    }
+  })
+  alert('Saved')
+  saveToStorage()
+}
+
 watch(() => title.value, (val) => {
   debounce('title', () => {
     alert('Project title saved')
     title.value = val
-    sessionStorage.setItem('title', title.value)
+    sessionStorage.setItem('title', val)
   }, 2000)
 })
 
