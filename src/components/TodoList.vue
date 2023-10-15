@@ -26,12 +26,9 @@
 <script setup lang="ts">
 import Button from './Button.vue';
 import InputCheckbox from './From/InputCheckbox.vue';
+import { ITodo } from '../types';
 
-interface Props {
-    id: number
-    todo: string
-    isDone: boolean
-}
+interface Props extends ITodo { }
 
 interface Emits {
     (e: 'delete', id: number): void

@@ -2,7 +2,8 @@
   <div class="w-full h-screen bg-gray-100 pt-8">
     <form @submit.prevent="addTodo" class="bg-white p-3 max-w-md mx-auto">
       <div class="text-center">
-        <h1 class="text-3xl font-bold">ToDo App</h1>
+        <Input type="text" class="text-3xl text-center font-bold outline-none border-none" v-model="title"
+          placeholder="Title" />
         <div class="mt-4 flex">
           <Input v-model="state.todo" type="text" :error="$v.todo.$error" />
           <Button class="ml-2" type="submit" />
@@ -19,7 +20,7 @@
         <Button class="rounded-none !inline-block">
           Clear Completed Task
         </Button>
-        <Button @click="resetTodoList" btn-style="reset-todo">
+        <Button type="button" @click="resetTodoList" btn-style="reset-todo">
           Reset Todo List
         </Button>
       </div>
@@ -28,22 +29,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
+import { ref, reactive, watch } from 'vue';
 import { required } from '@vuelidate/validators'
 import { useVuelidate } from '@vuelidate/core'
+import { debounce } from './utils/index'
 
 import Button from './components/Button.vue';
 import Input from './components/From/Input.vue'
 import TodoList from './components/TodoList.vue';
-
-interface ITodo {
-  id: number,
-  todo: string,
-  isDone: boolean
-}
+import { ITodo } from './types/index'
 
 const todoList = ref([] as ITodo[])
-
+const title = ref('ToDo App')
 const state = reactive({
   todo: '',
 })
@@ -56,6 +53,10 @@ const $v = useVuelidate(rules, state)
 
 if (sessionStorage.getItem('todoList') !== null) {
   todoList.value = JSON.parse(sessionStorage.getItem('todoList') as string)
+}
+
+if (sessionStorage.getItem('title') !== null) {
+  title.value = sessionStorage.getItem('title') as string
 }
 
 const createTodo = (todo: string) => {
@@ -104,6 +105,14 @@ const resetTodoList = () => {
   todoList.value = []
   saveToStorage()
 }
+
+watch(() => title.value, (val) => {
+  debounce('title', () => {
+    alert('Project title saved')
+    title.value = val
+    sessionStorage.setItem('title', title.value)
+  }, 2000)
+})
 
 </script>
 
