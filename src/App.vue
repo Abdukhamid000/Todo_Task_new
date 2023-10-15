@@ -101,7 +101,7 @@ const toggleDone = (todoID: number) => {
     }
   })
 
-  todosListDone.value = todoList.value.filter((el) => el.isDone)
+  // todosListDone.value = todoList.value.filter((el) => el.isDone)
   saveToStorage()
 }
 
