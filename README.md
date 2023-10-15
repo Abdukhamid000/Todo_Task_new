@@ -27,3 +27,4 @@ If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has a
 6. making task done or reDone
 7. validation 
 8. filtering
+9. new todos on new browser tab
