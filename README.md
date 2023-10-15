@@ -17,3 +17,14 @@ If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has a
    2. Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
 2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
 # Todo_Task_new
+
+# Features 
+1. adding
+2. deleting 
+3. editing
+4. saving to session storage
+5. editing title 
+6. making task done or reDone
+7. validation 
+8. filtering
+9. new todos on new browser tab
