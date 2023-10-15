@@ -1,6 +1,10 @@
 <template>
   <div class="w-full h-screen bg-gray-100 pt-8">
-    <form @submit.prevent="addTodo" class="bg-white p-3 max-w-md mx-auto">
+
+    <form @submit.prevent="addTodo" class="bg-white p-3 max-w-md mx-auto relative">
+      <div v-if="isLoading" class="absolute right-1 top-1">
+        <div class="spinner"></div>
+      </div>
       <div class="text-center">
         <Input type="text" class="text-3xl text-center font-bold outline-none border-none" v-model="title"
           placeholder="Title" />
@@ -12,14 +16,11 @@
       <div class="mt-8">
         <ul v-if="todoList.length > 0">
           <TodoList v-for="item of todoList" v-bind="{ ...item }" :key="item.id" @delete="deleteTodo" @toggle="toggleDone"
-            @save="saveEditedTodo" />
+            @save="saveEditedTodo" @loading="isLoading = true" />
         </ul>
         <p v-else class="text-center">No Todos</p>
       </div>
       <div class="mt-8 space-x-2">
-        <Button @click="showOnlyDoneTodos" class="rounded-none !inline-block">
-          Clear Completed Task
-        </Button>
         <Button type="button" @click="resetTodoList" btn-style="reset-todo">
           Reset Todo List
         </Button>
@@ -40,8 +41,9 @@ import TodoList from './components/TodoList.vue';
 import { ITodo } from './types/index'
 
 const todoList = ref([] as ITodo[])
-const todosListDone = ref([] as ITodo[])
+// const todosListDone = ref([] as ITodo[])
 const title = ref('ToDo App')
+const isLoading = ref(false)
 const state = reactive({
   todo: '',
 })
@@ -108,10 +110,11 @@ const resetTodoList = () => {
   saveToStorage()
 }
 
-const showOnlyDoneTodos = () => {
-  todoList.value = todosListDone.value
-  console.log(todoList.value);
-}
+// Todo
+// const showOnlyDoneTodos = () => {
+//   todoList.value = todosListDone.value
+//   console.log(todoList.value);
+// }
 
 const saveEditedTodo = (todoID: number, text: string) => {
   todoList.value.forEach(el => {
@@ -119,16 +122,19 @@ const saveEditedTodo = (todoID: number, text: string) => {
       el.todo = text
     }
   })
+  isLoading.value = false
   alert('Saved')
   saveToStorage()
 }
 
 watch(() => title.value, (val) => {
+  isLoading.value = true
   debounce('title', () => {
     alert('Project title saved')
     title.value = val
     sessionStorage.setItem('title', val)
-  }, 2000)
+    isLoading.value = false
+  }, 1500)
 })
 
 </script>

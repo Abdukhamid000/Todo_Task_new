@@ -41,6 +41,7 @@ interface Emits {
     (e: 'delete', id: number): void
     (e: 'toggle', id: number): void
     (e: 'save', id: number, val: string): void
+    (e: 'loading'): void
 }
 
 const props = defineProps<Props>()
@@ -53,9 +54,10 @@ const change = () => {
 }
 
 watch(() => todoText.value, (val) => {
+    emits('loading')
     debounce('todoText', () => {
         emits('save', props.id, val)
-    }, 2000)
+    }, 1500)
 })
 </script>
 
